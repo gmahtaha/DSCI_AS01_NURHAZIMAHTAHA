@@ -71,40 +71,44 @@ if selected == "Supermarket Sales Dashboard" :
     left_column, right_column , end_column = st.columns(3)
 
     with left_column:
-            fig , ax = plt.subplots()
-            sns.barplot(data = filtered_data , x='Total', y='Customer type', errorbar= None , palette= 'crest')
-            plt.xlabel('Total Sales')
-            plt.ylabel('Customer Type')
-            plt.title('Sales by Customer Type')
-            plt.gca().xaxis.set_major_formatter('${:,.0f}'.format)
-            st.pyplot(fig)
+        customer = filtered_data.groupby('Customer type')['Total'].sum()
+        fig, ax = plt.subplots()
+        ax.pie(customer, labels=customer.index, autopct=lambda x: f'${x:.2f}', startangle=90, wedgeprops=dict(width=0.4), colors=sns.color_palette('crest'))
+        plt.axis('equal') 
+        plt.title('Total Transaction by Customer Type')
+        st.pyplot(fig)
 
     with right_column:
-            fig , ax = plt.subplots()
-            Payment = filtered_data.groupby('Day')['Total'].mean().reset_index()
-            sns.lineplot(x='Day', y='Total', data= Payment, marker='o', palette= 'crest', linewidth=2)
+            fig, ax = plt.subplots()
+            daily_sales = filtered_data.groupby('Day')['Total'].mean().reset_index()
+            sns.barplot(x='Day', y='Total', data=daily_sales, palette='crest')  
             plt.xlabel('Day')
             plt.ylabel('Total Sales')
-            plt.title('Sales by Day')
+            plt.title('Total Transaction by Day')
+            plt.gca().yaxis.set_major_formatter('${:,.0f}'.format)
             st.pyplot(fig)
 
     with end_column :
-            fig , ax = plt.subplots()
-            Payment = filtered_data.groupby('Month')['Total'].mean().reset_index()
-            sns.lineplot(x='Month', y='Total', data= Payment, marker='o', palette= 'crest', linewidth=2)
+            fig, ax = plt.subplots()
+            monthly_sales = filtered_data.groupby('Month')['Total'].mean().reset_index()
+            sns.lineplot(x='Month', y='Total', data=monthly_sales, marker='o', color='skyblue', linewidth=2, label='Total Sales')
+            plt.fill_between(monthly_sales['Month'], monthly_sales['Total'], color='skyblue', alpha=0.3)
             plt.xlabel('Month')
             plt.ylabel('Total Sales')
-            plt.title('Sales by Month')
+            plt.title('Total Transaction by Month')
+            plt.gca().yaxis.set_major_formatter('${:,.0f}'.format)
+            plt.legend()
             st.pyplot(fig)
+
 
     left, right , end = st.columns(3)
 
     with left:
             fig , ax = plt.subplots()
-            sns.barplot(data = filtered_data , x='Gender', y='Total', errorbar= None , palette= 'crest')
-            plt.xlabel('Gender')
+            sns.barplot(data = filtered_data , x='Payment', y='Total', errorbar= None , palette= 'crest')
+            plt.xlabel('Payment Method')
             plt.ylabel('Total Sales')
-            plt.title('Sales by Gender')
+            plt.title('Total Transaction by Payment Method')
             plt.gca().yaxis.set_major_formatter('${:,.0f}'.format)
             st.pyplot(fig)
 
@@ -114,17 +118,16 @@ if selected == "Supermarket Sales Dashboard" :
             sns.lineplot(x='Hour', y='Total', data= Payment, marker='o', palette= 'crest', linewidth=2)
             plt.xlabel('Hour')
             plt.ylabel('Total Sales')
-            plt.title('Sales by Hour')
+            plt.title('Total Transaction by Hour')
             plt.gca().yaxis.set_major_formatter('${:,.0f}'.format)
             st.pyplot(fig)
 
     with end :
-            fig , ax = plt.subplots()
-            sns.barplot(data = filtered_data , x='Payment', y='Total', errorbar= None , palette= 'crest')
-            plt.xlabel('Payment Method')
-            plt.ylabel('Total Sales')
-            plt.title('Total Sales by Payment Method')
-            plt.gca().yaxis.set_major_formatter('${:,.0f}'.format)
+            fig, ax = plt.subplots()
+            total_sales_by_gender = filtered_data.groupby('Gender')['Total'].sum()
+            ax.pie(total_sales_by_gender, labels=total_sales_by_gender.index, autopct=lambda x: f'${x:.2f}', startangle=90, colors=sns.color_palette('crest'))
+            plt.axis('equal')  
+            plt.title('Total Transaction by Gender')
             st.pyplot(fig)
 
 
@@ -135,27 +138,50 @@ if selected == "General Dashboard" :
         left_column, right_column, ending_column = st.columns(3)
 
         with left_column:
-                fig , ax = plt.subplots(figsize = (11,7))
+                fig, ax = plt.subplots()
+                rating = df.groupby('City')['Rating'].sum()
+                ax.pie(rating, labels=rating.index, autopct='%1.1f%%', startangle=90, colors=sns.color_palette('crest'))
+                plt.axis('equal')  
+                plt.title('Rating by City')
+                st.pyplot(fig)
+
+        with right_column:
+                fig , ax = plt.subplots()
                 sns.barplot(data = df , x='City', y='Total', errorbar= None , palette= 'crest')
                 plt.xlabel('City')
                 plt.ylabel('Total Sales')
                 plt.title('Sales by City')
                 plt.gca().yaxis.set_major_formatter('${:,.0f}'.format)
                 st.pyplot(fig)
-
-        with right_column:
-                fig , ax = plt.subplots(figsize = (11,7))
-                sns.barplot(data = df , x='City', y='Rating', errorbar= None , palette= 'crest')
-                plt.xlabel('City')
-                plt.ylabel('Rating')
-                plt.title('Rating by City')
-                st.pyplot(fig)
-        
+                
         with ending_column:
-                fig , ax = plt.subplots(figsize = (11,7))
-                sns.countplot(data=df,x=df['Customer type'],hue =df['Gender'], palette='crest')
+            fig, ax = plt.subplots()
+            gender_counts = df['Gender'].value_counts()
+            ax.pie(gender_counts, labels=gender_counts.index, autopct='%1.1f%%', startangle=90, wedgeprops=dict(width=0.4), colors=sns.color_palette('crest'))
+            plt.title('Distribution of Gender')
+            st.pyplot(fig)
+
+        left, right , end = st.columns(3)
+
+        with left:
+                fig , ax = plt.subplots()
+                products= df['Product line'].value_counts()
+                sns.barplot(x=products.values, y=products.index, palette='crest')
+                plt.ylabel('Products')
+                plt.xlabel('Count (Products)')
+                plt.title('Total Products Distribution')
+                st.pyplot(fig)
+
+        with right:
+                fig, ax = plt.subplots()
+                custom_palette = {'Male': '#289E8F', 'Female': '#1C3269'}
+                sns.countplot(data=df,x=df['Customer type'],hue =df['Gender'], palette=custom_palette)
                 plt.title('Customer type by Gender')
                 st.pyplot(fig)
-                
 
-                
+        with end:
+            fig, ax = plt.subplots()
+            custom_palette = {'Male': '#289E8F', 'Female': '#1C3269'}
+            sns.countplot(data=df,x=df['Customer type'],hue =df['Gender'], palette=custom_palette)
+            plt.title('Customer type by Gender')
+            st.pyplot(fig)
