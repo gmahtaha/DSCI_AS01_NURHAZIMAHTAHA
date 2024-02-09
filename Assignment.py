@@ -73,7 +73,7 @@ if selected == "Supermarket Sales Dashboard" :
     with left_column:
         customer = filtered_data.groupby('Customer type')['Total'].sum()
         fig, ax = plt.subplots()
-        ax.pie(customer, labels=customer.index, autopct=lambda x: f'${x:.2f}', startangle=90, wedgeprops=dict(width=0.4), colors=sns.color_palette('crest'))
+        ax.pie(customer, labels=customer.index, autopct='%1.1f%%', startangle=90, wedgeprops=dict(width=0.4), colors=sns.color_palette('crest'))
         plt.axis('equal') 
         plt.title('Total Transaction by Customer Type')
         st.pyplot(fig)
@@ -125,7 +125,7 @@ if selected == "Supermarket Sales Dashboard" :
     with end :
             fig, ax = plt.subplots()
             total_sales_by_gender = filtered_data.groupby('Gender')['Total'].sum()
-            ax.pie(total_sales_by_gender, labels=total_sales_by_gender.index, autopct=lambda x: f'${x:.2f}', startangle=90, colors=sns.color_palette('crest'))
+            ax.pie(total_sales_by_gender, labels=total_sales_by_gender.index, autopct='%1.1f%%', startangle=90, colors=sns.color_palette('crest'))
             plt.axis('equal')  
             plt.title('Total Transaction by Gender')
             st.pyplot(fig)
