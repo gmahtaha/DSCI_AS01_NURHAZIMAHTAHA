@@ -147,9 +147,9 @@ if selected == "Supermarket Sales Dashboard" :
     with no3 :
              #filter for graph 6
             st.write ("**Total Sales by Gender's Filter**")
-            cust = st.radio('Select the Customer Type:', df['Customer type'].unique())
+            cust = st.radio('Select the Month:', df['Month'].unique())
             pro  = st.radio('Select the Product line:', df['Product line'].unique())
-            graph6 = df[(df['Customer type'] == cust ) & (df['Product line'] == (pro))]       
+            graph6 = df[(df['Month'] == cust ) & (df['Product line'] == (pro))]           
 
 
     with no4 :
